@@ -1,7 +1,8 @@
-package ipam
+package main
 
 import (
 	"fmt"
+
 	"github.com/containernetworking/cni/pkg/skel"
 	"github.com/containernetworking/cni/pkg/version"
 	"github.com/containernetworking/plugins/pkg/utils/buildversion"
@@ -21,5 +22,5 @@ func cmdCheck(args *skel.CmdArgs) error {
 }
 
 func main() {
-	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.All, buildversion.BuildString("IPAM plugin"))
+	skel.PluginMain(cmdAdd, cmdCheck, cmdDel, version.All, buildversion.BuildString("Simple IPAM plugin"))
 }
