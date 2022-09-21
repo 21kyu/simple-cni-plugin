@@ -13,8 +13,7 @@ const brName = "bridge0"
 func TestSetupBridge(t *testing.T) {
 	br, brInterface, err := SetupBridge(brName)
 	defer func(link netlink.Link) {
-		err := netlink.LinkDel(link)
-		if err != nil {
+		if err := netlink.LinkDel(link); err != nil {
 			t.Error(err)
 		}
 	}(br)

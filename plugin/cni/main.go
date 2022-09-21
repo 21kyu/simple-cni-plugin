@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/containernetworking/plugins/pkg/ns"
 	"runtime"
 
 	"github.com/21kyu/simple-cni-plugin/pkg/connector"
@@ -28,13 +29,19 @@ func cmdAdd(args *skel.CmdArgs) error {
 		return err
 	}
 
-	if conf.PrevResult != nil {
-		return fmt.Errorf("must be called as the first plugin")
-	}
-
-	_, _, err = connector.SetupBridge(conf.BrName)
+	br, _, err := connector.SetupBridge(conf.BrName)
 	if err != nil {
 		return err
+	}
+
+	netNs, err := ns.GetNS(args.Netns)
+	if err != nil {
+		return fmt.Errorf("failed to open netns %q: %v", args.Netns, err)
+	}
+
+	_, _, err = connector.SetupVeth(br, netNs, args.ContainerID, args.IfName)
+	if err != nil {
+		return fmt.Errorf("failed to setup veth: %v", err)
 	}
 
 	result := &current.Result{
