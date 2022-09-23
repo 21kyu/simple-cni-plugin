@@ -22,6 +22,7 @@ func TestSetupVeth(t *testing.T) {
 	if err != nil {
 		t.Error(err)
 	}
+	defer netNs.Close()
 
 	veth, peer, err := SetupVeth(br, netNs, "1234567890", contIfaceName)
 	defer func(veth netlink.Link) {

@@ -33,6 +33,7 @@ func setupVethRemoteNs(netNs ns.NetNS, srcIfName, dstIfName string) error {
 	})
 }
 
+// SetupVeth creates a veth pair and moves one end into the container's namespace
 func SetupVeth(br *netlink.Bridge, netNs ns.NetNS, contID, ifName string) (*netlink.Veth, netlink.Link, error) {
 	var err error
 

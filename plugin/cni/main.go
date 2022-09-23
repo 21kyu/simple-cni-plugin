@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/containernetworking/plugins/pkg/ipam"
 	"github.com/containernetworking/plugins/pkg/ns"
 	"runtime"
 
@@ -38,6 +39,7 @@ func cmdAdd(args *skel.CmdArgs) error {
 	if err != nil {
 		return fmt.Errorf("failed to open netns %q: %v", args.Netns, err)
 	}
+	defer netNs.Close()
 
 	_, _, err = connector.SetupVeth(br, netNs, args.ContainerID, args.IfName)
 	if err != nil {
@@ -46,6 +48,12 @@ func cmdAdd(args *skel.CmdArgs) error {
 
 	result := &current.Result{
 		CNIVersion: current.ImplementedSpecVersion,
+	}
+
+	// run the IPAM plugin and get back the config to apply
+	_, err = ipam.ExecAdd(conf.IPAM.Type, args.StdinData)
+	if err != nil {
+		return err
 	}
 
 	// Pass through the result for the next plugin

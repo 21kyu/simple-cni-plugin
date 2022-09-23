@@ -59,6 +59,7 @@ func ensureBridge(brName string) (*netlink.Bridge, error) {
 	return br, nil
 }
 
+// SetupBridge creates a bridge or gets an existing one
 func SetupBridge(brName string) (*netlink.Bridge, *current.Interface, error) {
 	br, err := ensureBridge(brName)
 	if err != nil {
