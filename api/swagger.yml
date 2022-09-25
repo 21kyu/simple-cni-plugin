@@ -1,0 +1,82 @@
+consumes:
+  - application/json
+info:
+  description: Serve REST API Endpoints for Simple CNI plugin
+  title: Simple CNI Server
+  version: 0.1.0
+produces:
+  - application/json
+schemes:
+  - http
+swagger: "2.0"
+paths:
+  "/ipam":
+    post:
+      summary: Allocate IP address
+      tags:
+        - ipam
+      parameters:
+        - "$ref": "#/parameters/ipam-family"
+        - "$ref": "#/parameters/ipam-owner"
+      responses:
+        "201":
+          description: IP address allocated
+          schema:
+              "$ref": "#/definitions/ipam-response"
+  "/ipam/{ip}":
+    delete:
+      summary: Release an allocated IP address
+      tags:
+        - ipam
+      parameters:
+        - "$ref": "#/parameters/ipam-ip"
+      responses:
+        "200":
+          description: IP address released
+        "400":
+          description: Invalid IP address
+        "404":
+          description: IP address not found
+        "500":
+          description: IP address release failed
+parameters:
+  ipam-ip:
+    type: string
+    name: ip
+    description: IP address
+    in: path
+    required: true
+  ipam-family:
+    type: string
+    name: family
+    description: IP family
+    in: query
+    enum:
+      - ipv4
+  ipam-owner:
+    type: string
+    name: owner
+    description: Owner of the IP address
+    in: query
+definitions:
+  ipam-response:
+    type: object
+    description: IPAM configuration
+    required:
+      - address
+    properties:
+      address:
+        "$ref": "#/definitions/ipam-address"
+  ipam-address:
+    type: object
+    description: Addressing information
+    required:
+      - ip
+      - gateway
+    properties:
+      ip:
+        type: string
+        description: IP address
+      gateway:
+        type: string
+        description: Gateway address
